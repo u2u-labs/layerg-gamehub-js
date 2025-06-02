@@ -1,2 +1,2 @@
 export { LayerGGamehubClient } from './client';
-export { Environment } from './config';
+export { Environment } from './types';

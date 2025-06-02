@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import { Auth } from "./auth";
-import { AuthResponse } from "./types";
-import { Environment, baseUrls, ClientOptions } from "./config";
+import { AuthResponse, ClientOptions, Environment } from "./types";
+import { baseUrls } from "./config";
 import { Assets } from "./assets";
 
 export class LayerGGamehubClient {

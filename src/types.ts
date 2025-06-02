@@ -1,3 +1,13 @@
+export enum Environment {
+  Dev = "dev",
+  Prod = "prod",
+}
+
+export type ClientOptions = {
+  retry: number,
+  timeout: number
+}
+
 export interface Asset {
   id: string;
   tokenId: string;
