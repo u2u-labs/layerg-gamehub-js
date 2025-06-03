@@ -30,7 +30,7 @@ const client = new LayerGGamehubClient(
 
 ## Examples
 
-### 🔹 Assets
+### Assets
 
 ```typescript
 // Get an asset
