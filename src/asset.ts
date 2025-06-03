@@ -1,4 +1,5 @@
 import { LayerGGamehubClient } from "./client";
+import { LayerGError } from "./error";
 import { Asset, CreateAssetInput, UpdateAssetInput } from "./types";
 import { withRetry } from "./utils";
 
@@ -9,12 +10,24 @@ export class AssetClient {
     this.client = client;
   }
 
-  async getAsset(assetId: string, collectionId: string): Promise<Asset | Error> {
-    return this.handleRequest<Asset>("get", `/assets/${collectionId}/${assetId}`);
+  async getAsset(
+    assetId: string,
+    collectionId: string
+  ): Promise<Asset | Error> {
+    return this.handleRequest<Asset>(
+      "get",
+      `/assets/${collectionId}/${assetId}`
+    );
   }
 
-  async createAsset(createAssetInput: CreateAssetInput): Promise<Asset | Error> {
-    return this.handleRequest<Asset>("post", "/assets/create", createAssetInput);
+  async createAsset(
+    createAssetInput: CreateAssetInput
+  ): Promise<Asset | Error> {
+    return this.handleRequest<Asset>(
+      "post",
+      "/assets/create",
+      createAssetInput
+    );
   }
 
   async updateAsset(
@@ -47,12 +60,18 @@ export class AssetClient {
           });
           return res.data;
         } catch (err: any) {
-          return new Error(err.toString());
+          throw new LayerGError(
+            `Failed to handle ${method} request to ${url}. Error: `,
+            err
+          );
         }
       },
       this.client.getClientOptions().retry,
       (attempt, err) => {
-        console.warn(`[AssetClient] ${method.toUpperCase()} ${url} attempt ${attempt} failed`, err);
+        console.warn(
+          `[AssetClient] ${method.toUpperCase()} ${url} attempt ${attempt} failed`,
+          err
+        );
       }
     );
   }
