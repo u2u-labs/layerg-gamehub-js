@@ -1,20 +1,21 @@
 import axios, { AxiosInstance } from "axios";
-import { Auth } from "./auth";
-import { AuthResponse, ClientOptions, Environment } from "./types";
 import { baseUrls } from "./config";
-import { Assets } from "./assets";
+import { ClientOptions, AuthResponse, Environment } from "./types";
+import { AssetClient } from "./asset";
+import { CollectionClient } from "./collection";
 
 export class LayerGGamehubClient {
   private apiKey: string;
   private apiKeyId: string;
-  private accessToken: string = "";
-  private refreshToken: string = "";
+  private accessToken = "";
+  private refreshToken = "";
+  private accessTokenExpire = 0;
+  private refreshTokenExpire = 0;
   private axios: AxiosInstance;
-  private auth: Auth;
   private clientOptions: ClientOptions;
 
-  // Exposed modules
-  public assets: Assets;
+  public assets: AssetClient;
+  public collections: CollectionClient;
 
   constructor(
     apiKey: string,
@@ -23,50 +24,81 @@ export class LayerGGamehubClient {
     clientOptions: ClientOptions = { retry: 1, timeout: 10000 }
   ) {
     this.validateApiKeys(apiKey, apiKeyId);
-
     this.apiKey = apiKey;
     this.apiKeyId = apiKeyId;
     this.clientOptions = clientOptions;
 
     this.axios = axios.create({
       baseURL: baseUrls[env],
-      timeout: this.clientOptions.timeout,
+      timeout: clientOptions.timeout,
     });
 
-    this.auth = new Auth(this.apiKey, this.apiKeyId, this.axios);
-    this.assets = new Assets(
-      {
-        axios: this.axios,
-        clientOptions: this.clientOptions,
-      },
-      () => this.accessToken,
-      this.ensureAccessToken.bind(this)
-    );
+    this.assets = new AssetClient(this);
+    this.collections = new CollectionClient(this);
 
     this.authenticate();
   }
 
   private validateApiKeys(apiKey: string, apiKeyId: string): void {
-    if (!apiKey || apiKey.trim() === "") {
-      throw new Error("API key is required and cannot be empty.");
+    if (!apiKey.trim()) throw new Error("API key is required.");
+    if (!apiKeyId.trim()) throw new Error("API key ID is required.");
+  }
+
+  private setTokenInfo(authResp: AuthResponse | null): void {
+    if (authResp) {
+      this.accessToken = authResp.accessToken;
+      this.refreshToken = authResp.refreshToken;
+      this.accessTokenExpire = authResp.accessTokenExpire;
+      this.refreshTokenExpire = authResp.refreshTokenExpire;
+    } else {
+      this.accessToken = this.refreshToken = "";
+      this.accessTokenExpire = this.refreshTokenExpire = 0;
     }
-    if (!apiKeyId || apiKeyId.trim() === "") {
-      throw new Error("API key ID is required and cannot be empty.");
+  }
+
+  public getAuthHeader() {
+    return { Authorization: `Bearer ${this.accessToken}` };
+  }
+
+  async authenticate(): Promise<void> {
+    try {
+      const res = await this.axios.post<AuthResponse>("/auth/login", {
+        apiKey: this.apiKey,
+        apiKeyId: this.apiKeyId,
+      });
+      this.setTokenInfo(res.data);
+    } catch {
+      this.setTokenInfo(null);
+      throw new Error("Authentication failed.");
     }
   }
 
-  private async authenticate(): Promise<void> {
-    const authResp = await this.auth.authenticate();
-    this.setTokens(authResp);
+  async refreshAccessToken(): Promise<void> {
+    try {
+      const res = await this.axios.post<AuthResponse>("/auth/refresh", {
+        refreshToken: this.refreshToken,
+      });
+      this.setTokenInfo(res.data);
+    } catch {
+      this.setTokenInfo(null);
+      throw new Error("Token refresh failed.");
+    }
   }
 
-  private async ensureAccessToken(): Promise<void> {
-    const authResp = await this.auth.refresh(this.refreshToken);
-    this.setTokens(authResp);
+  async ensureAccessToken(): Promise<void> {
+    const now = Date.now();
+    if (now >= this.refreshTokenExpire) {
+      await this.authenticate();
+    } else if (now >= this.accessTokenExpire) {
+      await this.refreshAccessToken();
+    }
   }
 
-  private setTokens(authResp: AuthResponse): void {
-    this.accessToken = authResp.accessToken;
-    this.refreshToken = authResp.refreshToken;
+  getAxios() {
+    return this.axios;
+  }
+
+  getClientOptions() {
+    return this.clientOptions;
   }
 }

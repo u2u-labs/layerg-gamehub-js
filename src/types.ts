@@ -163,4 +163,6 @@ export interface SmartContract {
 export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
+  accessTokenExpire: number;
+  refreshTokenExpire: number;
 }
