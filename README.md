@@ -28,9 +28,7 @@ const client = new LayerGGamehubClient(
 );
 ```
 
-## Available Modules
-
-The client splits logic into organized modules.
+## Examples
 
 ### 🔹 Assets
 
@@ -74,23 +72,4 @@ const updatedCollection = await client.collections.updateCollection(
 
 // Make a collection public
 const success = await client.collections.publicCollection("collectionId");
-```
-## Example
-
-```typescript
-  const client = new LayerGGamehubClient("apiKey", "apiKeyId", "production");
-
-  try {
-    const collection = await client.collections.getCollection("my-collection-id");
-    console.log("Collection:", collection);
-
-    const asset = await client.assets.createAsset({
-      name: "Sword of Legends",
-      collectionId: "my-collection-id",
-      // ...other fields
-    });
-    console.log("Created Asset:", asset);
-  } catch (err) {
-    console.error("Error:", err);
-  }
 ```
