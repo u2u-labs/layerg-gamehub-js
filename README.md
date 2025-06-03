@@ -1,4 +1,3 @@
-
 # LayerG Gamehub Client SDK
 
 The **layerg-gamehub-client** package provides robust APIs for interacting with the LayerG Gamehub system. It offers developers tools to authenticate, manage assets, and manage collections through organized modules.
@@ -208,14 +207,20 @@ const client = new LayerGGamehubClient(
 
 ## Error Handling
 
-All methods return either the expected result or an Error object. Always check results:
+All methods return either the expected result or throw an Error object.
 
 ```typescript
-const asset = await client.assets.getAsset("assetId", "collectionId");
-
-if (asset instanceof Error) {
-  console.error("Failed to fetch asset:", asset.message);
-} else {
-  console.log("Asset:", asset);
+try {
+  const asset = await client.assets.getAsset("assetId", "collectionId");
+  console.log("Fetched asset:", asset);
+} catch (err: any) {
+  if (err instanceof LayerGError) {
+    console.error("LayerG SDK Error:", err.message);
+    if (err.cause) {
+      console.error("Details:", err.cause);
+    }
+  } else {
+    console.error("Unknown Error:", err);
+  }
 }
 ```

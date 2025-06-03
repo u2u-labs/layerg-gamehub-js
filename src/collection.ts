@@ -1,4 +1,5 @@
 import { LayerGGamehubClient } from "./client";
+import { LayerGError } from "./error";
 import { Collection, UpsertCollectionInput } from "./types";
 import { withRetry } from "./utils";
 
@@ -16,7 +17,11 @@ export class CollectionClient {
   async createCollection(
     createCollectionInput: UpsertCollectionInput
   ): Promise<Collection | Error> {
-    return this.handleRequest<Collection>("post", "/collection", createCollectionInput);
+    return this.handleRequest<Collection>(
+      "post",
+      "/collection",
+      createCollectionInput
+    );
   }
 
   async updateCollection(
@@ -36,20 +41,26 @@ export class CollectionClient {
     return withRetry(
       async () => {
         try {
-          await this.client.getAxios().post(
-            `/collection/public/${collectionId}`,
-            null,
-            { headers: this.client.getAuthHeader() }
-          );
+          await this.client
+            .getAxios()
+            .post(`/collection/public/${collectionId}`, null, {
+              headers: this.client.getAuthHeader(),
+            });
           return true;
         } catch (err: any) {
-          console.error(`[CollectionClient] POST /collection/public/${collectionId}`, err.toString());
+          console.error(
+            `[CollectionClient] POST /collection/public/${collectionId}`,
+            err.toString()
+          );
           return false;
         }
       },
       this.client.getClientOptions().retry,
       (attempt, err) => {
-        console.warn(`[CollectionClient] POST /collection/public/${collectionId} attempt ${attempt} failed`, err);
+        console.warn(
+          `[CollectionClient] POST /collection/public/${collectionId} attempt ${attempt} failed`,
+          err
+        );
       }
     );
   }
@@ -72,12 +83,18 @@ export class CollectionClient {
           });
           return res.data;
         } catch (err: any) {
-          return new Error(err.toString());
+          throw new LayerGError(
+            `Failed to handle ${method} request to ${url}. Error: `,
+            err
+          );
         }
       },
       this.client.getClientOptions().retry,
       (attempt, err) => {
-        console.warn(`[CollectionClient] ${method.toUpperCase()} ${url} attempt ${attempt} failed`, err);
+        console.warn(
+          `[CollectionClient] ${method.toUpperCase()} ${url} attempt ${attempt} failed`,
+          err
+        );
       }
     );
   }
