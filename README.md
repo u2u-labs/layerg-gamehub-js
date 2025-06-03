@@ -4,9 +4,9 @@
 ## Installation
 
 ```bash
-npm install layerg-gamehub-client
+npm install layerg-gamehub-js
 # or
-yarn add layerg-gamehub-client
+yarn add layerg-gamehub-js
 ```
 
 ## Usage
@@ -14,7 +14,7 @@ yarn add layerg-gamehub-client
 ### Import
 
 ```typescript
-import { LayerGGamehubClient } from "layerg-gamehub-client";
+import { LayerGGamehubClient } from "layerg-gamehub-js";
 ```
 
 ### Initialize Client
