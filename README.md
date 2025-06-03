@@ -87,14 +87,6 @@ const updated = await client.assets.updateAsset(
 console.log("Updated Asset:", updated);
 ```
 
----
-
-### CollectionClient
-
-APIs for managing game asset collections.
-
-#### Methods
-
 ##### getCollection
 
 ```typescript
