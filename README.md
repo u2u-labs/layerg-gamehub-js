@@ -1,5 +1,10 @@
-
 # LayerG Gamehub Client SDK
+
+The `layerg-gamehub-client` package provides robust APIs for interacting with the LayerG Gamehub system. It offers developers tools to authenticate, manage assets, and manage collections through organized modules.
+
+## LayerGGamehubClient
+
+The main orchestrator class providing access to asset and collection management modules.
 
 ## Installation
 
@@ -9,67 +14,222 @@ npm install layerg-gamehub-js
 yarn add layerg-gamehub-js
 ```
 
-## Usage
+## Modules
 
-### Import
+### AssetClient
 
-```typescript
-import { LayerGGamehubClient } from "layerg-gamehub-js";
-```
+APIs for managing game assets.
 
-### Initialize Client
+#### Methods
 
-```typescript
-const client = new LayerGGamehubClient(
-  "your-api-key",
-  "your-api-key-id",
-  "production", // or "development", "staging"
-  { retry: 3, timeout: 10000 }
-);
-```
+##### getAsset
 
-## Examples
+\`\`\`typescript
+getAsset(assetId: string, collectionId: string): Promise<Asset | Error>
+\`\`\`
 
-### Assets
+Fetches an asset by ID within a collection.
 
-```typescript
-// Get an asset
+**Parameters**:
+- \`assetId\`: string — The asset ID.
+- \`collectionId\`: string — The collection ID.
+
+**Returns**:
+- \`Promise<Asset | Error>\` — The asset object or an error.
+
+**Example**:
+\`\`\`typescript
 const asset = await client.assets.getAsset("assetId", "collectionId");
+console.log("Asset:", asset);
+\`\`\`
 
-// Create a new asset
+##### createAsset
+
+\`\`\`typescript
+createAsset(input: CreateAssetInput): Promise<Asset | Error>
+\`\`\`
+
+Creates a new asset.
+
+**Parameters**:
+- \`input\`: CreateAssetInput — Asset creation details.
+
+**Returns**:
+- \`Promise<Asset | Error>\` — The created asset or an error.
+
+**Example**:
+\`\`\`typescript
 const newAsset = await client.assets.createAsset({
-  name: "My New Asset",
+  name: "New Sword",
   collectionId: "collectionId",
-  // ...other fields
+  // ... other fields
 });
+console.log("Created Asset:", newAsset);
+\`\`\`
 
-// Update an asset
-const updatedAsset = await client.assets.updateAsset(
-  { name: "Updated Name" },
+##### updateAsset
+
+\`\`\`typescript
+updateAsset(input: UpdateAssetInput, collectionId: string, assetId: string): Promise<Asset | Error>
+\`\`\`
+
+Updates an existing asset.
+
+**Parameters**:
+- \`input\`: UpdateAssetInput — Asset update details.
+- \`collectionId\`: string — Collection ID.
+- \`assetId\`: string — Asset ID.
+
+**Returns**:
+- \`Promise<Asset | Error>\` — The updated asset or an error.
+
+**Example**:
+\`\`\`typescript
+const updated = await client.assets.updateAsset(
+  { name: "Updated Sword" },
   "collectionId",
   "assetId"
 );
-```
+console.log("Updated Asset:", updated);
+\`\`\`
 
-### Collections
+### CollectionClient
 
-```typescript
-// Get a collection
+APIs for managing game asset collections.
+
+#### Methods
+
+##### getCollection
+
+\`\`\`typescript
+getCollection(collectionId: string): Promise<Collection | Error>
+\`\`\`
+
+Fetches a collection by ID.
+
+**Parameters**:
+- \`collectionId\`: string — The collection ID.
+
+**Returns**:
+- \`Promise<Collection | Error>\` — The collection or an error.
+
+**Example**:
+\`\`\`typescript
 const collection = await client.collections.getCollection("collectionId");
+console.log("Collection:", collection);
+\`\`\`
 
-// Create a collection
+##### createCollection
+
+\`\`\`typescript
+createCollection(input: UpsertCollectionInput): Promise<Collection | Error>
+\`\`\`
+
+Creates a new collection.
+
+**Parameters**:
+- \`input\`: UpsertCollectionInput — Collection creation details.
+
+**Returns**:
+- \`Promise<Collection | Error>\` — The created collection or an error.
+
+**Example**:
+\`\`\`typescript
 const newCollection = await client.collections.createCollection({
-  name: "New Collection",
-  description: "Exciting description",
-  // ...other fields
+  name: "Epic Collection",
+  description: "A set of rare items",
+  // ... other fields
 });
+console.log("Created Collection:", newCollection);
+\`\`\`
 
-// Update a collection
-const updatedCollection = await client.collections.updateCollection(
+##### updateCollection
+
+\`\`\`typescript
+updateCollection(input: UpsertCollectionInput, collectionId: string): Promise<Collection | Error>
+\`\`\`
+
+Updates an existing collection.
+
+**Parameters**:
+- \`input\`: UpsertCollectionInput — Collection update details.
+- \`collectionId\`: string — Collection ID.
+
+**Returns**:
+- \`Promise<Collection | Error>\` — The updated collection or an error.
+
+**Example**:
+\`\`\`typescript
+const updated = await client.collections.updateCollection(
   { name: "Updated Collection" },
   "collectionId"
 );
+console.log("Updated Collection:", updated);
+\`\`\`
 
-// Make a collection public
+##### publicCollection
+
+\`\`\`typescript
+publicCollection(collectionId: string): Promise<boolean>
+\`\`\`
+
+Marks a collection as public.
+
+**Parameters**:
+- \`collectionId\`: string — The collection ID.
+
+**Returns**:
+- \`Promise<boolean>\` — Whether the operation was successful.
+
+**Example**:
+\`\`\`typescript
 const success = await client.collections.publicCollection("collectionId");
-```
+console.log("Collection published:", success);
+\`\`\`
+
+## Authentication
+
+The client **automatically handles**:
+- Initial login (\`/auth/login\`)
+- Access token refresh (\`/auth/refresh\`)
+- Full reauthentication if the refresh token expires
+
+You don’t need to manage tokens manually.
+
+## Retry Handling
+
+All requests:
+- Use an internal \`withRetry()\` mechanism
+- Retry up to the \`retry\` count defined in \`ClientOptions\`
+- Log retry attempts to the console
+
+## Client Initialization
+
+\`\`\`typescript
+import { LayerGGamehubClient } from "layerg-gamehub-client";
+
+const client = new LayerGGamehubClient(
+  "apiKey",
+  "apiKeyId",
+  "production", // or "development", "staging"
+  { retry: 3, timeout: 10000 }
+);
+\`\`\`
+
+## Error Handling
+
+All methods return either the expected result or an \`Error\` object. Always check results:
+
+\`\`\`typescript
+const asset = await client.assets.getAsset("assetId", "collectionId");
+
+if (asset instanceof Error) {
+  console.error("Failed to fetch asset:", asset.message);
+} else {
+  console.log("Asset:", asset);
+}
+\`\`\`
+
+## License
+
+MIT
