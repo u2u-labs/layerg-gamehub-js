@@ -189,28 +189,6 @@ console.log("Collection published:", success);
 
 ---
 
-## Authentication
-
-The client automatically handles:
-
-- Initial login (`/auth/login`)
-- Access token refresh (`/auth/refresh`)
-- Full reauthentication if the refresh token expires
-
-You don’t need to manage tokens manually.
-
----
-
-## Retry Handling
-
-All requests:
-
-- Use an internal `withRetry()` mechanism
-- Retry up to the `retry` count defined in ClientOptions
-- Log retry attempts to the console
-
----
-
 ## Client Initialization
 
 **Example:**
