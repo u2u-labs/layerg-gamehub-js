@@ -5,23 +5,9 @@ The **layerg-gamehub-client** package provides robust APIs for interacting with 
 
 ---
 
-## LayerGGamehubClient
-
-The main orchestrator class providing access to asset and collection management modules.
-
----
-
-## Modules
-
-### AssetClient
-
-APIs for managing game assets.
-
 #### Methods
 
 ##### getAsset
-
-**Signature:**
 
 ```typescript
 getAsset(assetId: string, collectionId: string): Promise<Asset | Error>
@@ -46,8 +32,6 @@ console.log("Asset:", asset);
 ```
 
 ##### createAsset
-
-**Signature:**
 
 ```typescript
 createAsset(input: CreateAssetInput): Promise<Asset | Error>
@@ -75,8 +59,6 @@ console.log("Created Asset:", newAsset);
 ```
 
 ##### updateAsset
-
-**Signature:**
 
 ```typescript
 updateAsset(input: UpdateAssetInput, collectionId: string, assetId: string): Promise<Asset | Error>
@@ -115,8 +97,6 @@ APIs for managing game asset collections.
 
 ##### getCollection
 
-**Signature:**
-
 ```typescript
 getCollection(collectionId: string): Promise<Collection | Error>
 ```
@@ -139,8 +119,6 @@ console.log("Collection:", collection);
 ```
 
 ##### createCollection
-
-**Signature:**
 
 ```typescript
 createCollection(input: UpsertCollectionInput): Promise<Collection | Error>
@@ -169,8 +147,6 @@ console.log("Created Collection:", newCollection);
 
 ##### updateCollection
 
-**Signature:**
-
 ```typescript
 updateCollection(input: UpsertCollectionInput, collectionId: string): Promise<Collection | Error>
 ```
@@ -197,8 +173,6 @@ console.log("Updated Collection:", updated);
 ```
 
 ##### publicCollection
-
-**Signature:**
 
 ```typescript
 publicCollection(collectionId: string): Promise<boolean>
@@ -275,9 +249,3 @@ if (asset instanceof Error) {
   console.log("Asset:", asset);
 }
 ```
-
----
-
-## License
-
-MIT
