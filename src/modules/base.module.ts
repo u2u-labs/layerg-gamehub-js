@@ -36,7 +36,7 @@ export abstract class BaseModule {
         } catch (err: any) {
           throw new LayerGError(
             `Request failed: ${label}`,
-            err.response.data.message.toString()
+            err?.response?.data?.message ?? err.message ?? err.toString()
           );
         }
       },

@@ -30,7 +30,7 @@ export class CollectionsModule extends BaseModule {
   }
 
   async publicCollection(collectionId: string): Promise<boolean> {
-    if (!this.client.internal.isAuthenticated) {
+    if (!this.client.internal.isAuthenticated()) {
       throw new LayerGError(
         "Client not authenticated. You need to be authenticated first in order to make this request"
       );

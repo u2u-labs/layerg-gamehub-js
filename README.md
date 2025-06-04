@@ -14,16 +14,15 @@ const client = new LayerGGamehubClient("apiKey", "apiKeyId", Environment.Dev, {
   timeout: 10000,
 });
 
-const response = await client.authenticate();
-if (!response.isSuccess) {
-  console.log("Authentication error: " + response.error?.message);
+const { isSuccess, error } = await client.authenticate();
+
+if (!isSuccess) {
+  console.error("Failed to authenticate:", error?.message);
   return;
 }
-if (response.isSuccess) {
-  // continue to call assets/collections methods here
-} else {
-  console.log(response.error);
-}
+
+// continue to call assets/collections methods here
+
 ```
 
 ---
