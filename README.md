@@ -16,7 +16,7 @@ const client = new LayerGGamehubClient("apiKey", "apiKeyId", Environment.Dev, {
 
 const { isSuccess, error, data } = await client.authenticate();
 
-if (!isAuthenticateSuccess) {
+if (!isSuccess) {
   console.error("Failed to authenticate:", error?.message);
   return;
 }
