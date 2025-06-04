@@ -1,8 +1,8 @@
 import axios, { AxiosInstance } from "axios";
 import { baseUrls } from "./config";
 import { ClientOptions, AuthResponse, Environment } from "./types";
-import { AssetClient } from "./asset";
-import { CollectionClient } from "./collection";
+import { AssetsModule } from "./modules/assets.module";
+import { CollectionsModule } from "./modules/collections.module";
 
 export class LayerGGamehubClient {
   private apiKey: string;
@@ -14,8 +14,8 @@ export class LayerGGamehubClient {
   private axios: AxiosInstance;
   private clientOptions: ClientOptions;
 
-  public assets: AssetClient;
-  public collections: CollectionClient;
+  public assets: AssetsModule;
+  public collections: CollectionsModule;
 
   constructor(
     apiKey: string,
@@ -23,7 +23,7 @@ export class LayerGGamehubClient {
     env: Environment,
     clientOptions: ClientOptions = { retry: 1, timeout: 10000 }
   ) {
-    this.validateApiKeys(apiKey, apiKeyId);
+    this.#validateApiKeys(apiKey, apiKeyId);
     this.apiKey = apiKey;
     this.apiKeyId = apiKeyId;
     this.clientOptions = clientOptions;
@@ -33,18 +33,18 @@ export class LayerGGamehubClient {
       timeout: clientOptions.timeout,
     });
 
-    this.assets = new AssetClient(this);
-    this.collections = new CollectionClient(this);
+    this.assets = new AssetsModule(this);
+    this.collections = new CollectionsModule(this);
 
-    this.authenticate();
+    this.#authenticate();
   }
 
-  private validateApiKeys(apiKey: string, apiKeyId: string): void {
+  #validateApiKeys(apiKey: string, apiKeyId: string): void {
     if (!apiKey.trim()) throw new Error("API key is required.");
     if (!apiKeyId.trim()) throw new Error("API key ID is required.");
   }
 
-  private setTokenInfo(authResp: AuthResponse | null): void {
+  #setTokenInfo(authResp: AuthResponse | null): void {
     if (authResp) {
       this.accessToken = authResp.accessToken;
       this.refreshToken = authResp.refreshToken;
@@ -56,43 +56,52 @@ export class LayerGGamehubClient {
     }
   }
 
-  public getAuthHeader() {
+  #getAuthHeader() {
     return { Authorization: `Bearer ${this.accessToken}` };
   }
 
-  async authenticate(): Promise<void> {
+  async #authenticate(): Promise<void> {
     try {
       const res = await this.axios.post<AuthResponse>("/auth/login", {
         apiKey: this.apiKey,
         apiKeyId: this.apiKeyId,
       });
-      this.setTokenInfo(res.data);
+      this.#setTokenInfo(res.data);
     } catch {
-      this.setTokenInfo(null);
+      this.#setTokenInfo(null);
       throw new Error("Authentication failed.");
     }
   }
 
-  async refreshAccessToken(): Promise<void> {
+  async #refreshAccessToken(): Promise<void> {
     try {
       const res = await this.axios.post<AuthResponse>("/auth/refresh", {
         refreshToken: this.refreshToken,
       });
-      this.setTokenInfo(res.data);
+      this.#setTokenInfo(res.data);
     } catch {
-      this.setTokenInfo(null);
+      this.#setTokenInfo(null);
       throw new Error("Token refresh failed.");
     }
   }
 
-  async ensureAccessToken(): Promise<void> {
+  async #refreshAuthIfNeeded(): Promise<void> {
     const now = Date.now();
     if (now >= this.refreshTokenExpire) {
-      await this.authenticate();
+      await this.#authenticate();
     } else if (now >= this.accessTokenExpire) {
-      await this.refreshAccessToken();
+      await this.#refreshAccessToken();
     }
   }
+
+  /** @internal - Do not use outside the SDK */
+  readonly internal: {
+    refreshAuthIfNeeded: () => Promise<void>;
+    getAuthHeader: () => { Authorization: string };
+  } = {
+    refreshAuthIfNeeded: () => this.#refreshAuthIfNeeded(),
+    getAuthHeader: () => this.#getAuthHeader(),
+  };
 
   getAxios() {
     return this.axios;

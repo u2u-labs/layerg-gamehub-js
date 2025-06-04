@@ -1,15 +1,8 @@
-import { LayerGGamehubClient } from "./client";
-import { LayerGError } from "./error";
-import { Collection, UpsertCollectionInput } from "./types";
-import { withRetry } from "./utils";
+import { BaseModule } from "./base.module";
+import { Collection, UpsertCollectionInput } from "../types";
+import { withRetry } from "../utils";
 
-export class CollectionClient {
-  private client: LayerGGamehubClient;
-
-  constructor(client: LayerGGamehubClient) {
-    this.client = client;
-  }
-
+export class CollectionsModule extends BaseModule {
   async getCollection(collectionId: string): Promise<Collection | Error> {
     return this.handleRequest<Collection>("get", `/collection/${collectionId}`);
   }
@@ -36,7 +29,7 @@ export class CollectionClient {
   }
 
   async publicCollection(collectionId: string): Promise<boolean> {
-    await this.client.ensureAccessToken();
+    await this.client.internal.refreshAuthIfNeeded();
 
     return withRetry(
       async () => {
@@ -44,7 +37,7 @@ export class CollectionClient {
           await this.client
             .getAxios()
             .post(`/collection/public/${collectionId}`, null, {
-              headers: this.client.getAuthHeader(),
+              headers: this.client.internal.getAuthHeader(),
             });
           return true;
         } catch (err: any) {
@@ -59,40 +52,6 @@ export class CollectionClient {
       (attempt, err) => {
         console.warn(
           `[CollectionClient] POST /collection/public/${collectionId} attempt ${attempt} failed`,
-          err
-        );
-      }
-    );
-  }
-
-  private async handleRequest<T>(
-    method: "get" | "post" | "put",
-    url: string,
-    payload?: any
-  ): Promise<T | Error> {
-    await this.client.ensureAccessToken();
-
-    return withRetry(
-      async () => {
-        try {
-          const res = await this.client.getAxios().request<T>({
-            method,
-            url,
-            data: payload,
-            headers: this.client.getAuthHeader(),
-          });
-          return res.data;
-        } catch (err: any) {
-          throw new LayerGError(
-            `Failed to handle ${method} request to ${url}. Error: `,
-            err
-          );
-        }
-      },
-      this.client.getClientOptions().retry,
-      (attempt, err) => {
-        console.warn(
-          `[CollectionClient] ${method.toUpperCase()} ${url} attempt ${attempt} failed`,
           err
         );
       }
