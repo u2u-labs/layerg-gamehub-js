@@ -1,7 +1,5 @@
 import { BaseModule } from "./base.module";
 import { Collection, Result, UpsertCollectionInput } from "../types";
-import { normalizeError, withRetry } from "../utils";
-import { LayerGError } from "../error";
 
 export class CollectionsModule extends BaseModule {
   async getCollection(collectionId: string): Promise<Result<Collection>> {
