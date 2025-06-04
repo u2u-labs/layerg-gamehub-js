@@ -34,7 +34,10 @@ export abstract class BaseModule {
           });
           return res.data;
         } catch (err: any) {
-          throw new LayerGError(`Request failed: ${label}`, err);
+          throw new LayerGError(
+            `Request failed: ${label}`,
+            err.response.data.message.toString()
+          );
         }
       },
       this.client.internal.getClientOptions().retry,

@@ -9,15 +9,21 @@
 ```typescript
 import { LayerGGamehubClient, Environment } from "layerg-gamehub-client";
 
-const client = new LayerGGamehubClient(
-  "apiKey",
-  "apiKeyId",
-  Environment.Dev,
-  { retry: 3, timeout: 10000 }
-);
+const client = new LayerGGamehubClient("apiKey", "apiKeyId", Environment.Dev, {
+  retry: 3,
+  timeout: 10000,
+});
 
-await client.authenticate();
-
+const response = await client.authenticate();
+if (!response.isSuccess) {
+  console.log("Authentication error: " + response.error?.message);
+  return;
+}
+if (response.isSuccess) {
+  // continue to call assets/collections methods here
+} else {
+  console.log(response.error);
+}
 ```
 
 ---

@@ -58,16 +58,22 @@ export class LayerGGamehubClient {
     return { Authorization: `Bearer ${this.accessToken}` };
   }
 
-  public async authenticate(): Promise<void> {
+  public async authenticate(): Promise<{ isSuccess: boolean; error?: Error }> {
     try {
       const res = await this.axios.post<AuthResponse>("/auth/login", {
         apiKey: this.apiKey,
         apiKeyID: this.apiKeyId,
       });
       this.#setTokenInfo(res.data);
+      return {
+        isSuccess: true,
+      };
     } catch (err: any) {
       this.#setTokenInfo(null);
-      throw new Error("Authentication failed.");
+      return {
+        isSuccess: false,
+        error: new Error(err.response.data.message.toString()),
+      };
     }
   }
 
