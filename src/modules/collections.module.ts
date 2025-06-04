@@ -1,6 +1,7 @@
 import { BaseModule } from "./base.module";
 import { Collection, UpsertCollectionInput } from "../types";
 import { withRetry } from "../utils";
+import { LayerGError } from "../error";
 
 export class CollectionsModule extends BaseModule {
   async getCollection(collectionId: string): Promise<Collection | Error> {
@@ -9,7 +10,7 @@ export class CollectionsModule extends BaseModule {
 
   async createCollection(
     createCollectionInput: UpsertCollectionInput
-  ): Promise<Collection | Error> {
+  ): Promise<Collection> {
     return this.handleRequest<Collection>(
       "post",
       "/collection",
@@ -20,7 +21,7 @@ export class CollectionsModule extends BaseModule {
   async updateCollection(
     updateCollectionInput: UpsertCollectionInput,
     collectionId: string
-  ): Promise<Collection | Error> {
+  ): Promise<Collection> {
     return this.handleRequest<Collection>(
       "put",
       `/collection/${collectionId}`,
@@ -29,6 +30,12 @@ export class CollectionsModule extends BaseModule {
   }
 
   async publicCollection(collectionId: string): Promise<boolean> {
+    if (!this.client.internal.isAuthenticated) {
+      throw new LayerGError(
+        "Client not authenticated. You need to be authenticated first in order to make this request"
+      );
+    }
+
     await this.client.internal.refreshAuthIfNeeded();
 
     return withRetry(

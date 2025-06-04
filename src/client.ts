@@ -35,8 +35,6 @@ export class LayerGGamehubClient {
 
     this.assets = new AssetsModule(this);
     this.collections = new CollectionsModule(this);
-
-    this.#authenticate();
   }
 
   #validateApiKeys(apiKey: string, apiKeyId: string): void {
@@ -60,14 +58,14 @@ export class LayerGGamehubClient {
     return { Authorization: `Bearer ${this.accessToken}` };
   }
 
-  async #authenticate(): Promise<void> {
+  public async authenticate(): Promise<void> {
     try {
       const res = await this.axios.post<AuthResponse>("/auth/login", {
         apiKey: this.apiKey,
-        apiKeyId: this.apiKeyId,
+        apiKeyID: this.apiKeyId,
       });
       this.#setTokenInfo(res.data);
-    } catch {
+    } catch (err: any) {
       this.#setTokenInfo(null);
       throw new Error("Authentication failed.");
     }
@@ -88,19 +86,25 @@ export class LayerGGamehubClient {
   async #refreshAuthIfNeeded(): Promise<void> {
     const now = Date.now();
     if (now >= this.refreshTokenExpire) {
-      await this.#authenticate();
+      await this.authenticate();
     } else if (now >= this.accessTokenExpire) {
       await this.#refreshAccessToken();
     }
+  }
+
+  #isAuthenticated(): boolean {
+    return !!this.accessToken && Date.now() < this.accessTokenExpire;
   }
 
   /** @internal - Do not use outside the SDK */
   readonly internal: {
     refreshAuthIfNeeded: () => Promise<void>;
     getAuthHeader: () => { Authorization: string };
+    isAuthenticated: () => boolean;
   } = {
     refreshAuthIfNeeded: () => this.#refreshAuthIfNeeded(),
     getAuthHeader: () => this.#getAuthHeader(),
+    isAuthenticated: () => this.#isAuthenticated(),
   };
 
   getAxios() {

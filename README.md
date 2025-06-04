@@ -2,7 +2,7 @@
 
 ---
 
-## Client Initialization
+## Client Initialization & Authentication
 
 **Example:**
 
@@ -15,6 +15,9 @@ const client = new LayerGGamehubClient(
   Environment.Dev,
   { retry: 3, timeout: 10000 }
 );
+
+await client.authenticate();
+
 ```
 
 ---
@@ -24,7 +27,7 @@ const client = new LayerGGamehubClient(
 ##### getAsset
 
 ```typescript
-getAsset(assetId: string, collectionId: string): Promise<Asset | Error>
+getAsset(assetId: string, collectionId: string): Promise<Asset>
 ```
 
 Fetches an asset by ID within a collection.
@@ -48,7 +51,7 @@ console.log("Asset:", asset);
 ##### createAsset
 
 ```typescript
-createAsset(input: CreateAssetInput): Promise<Asset | Error>
+createAsset(input: CreateAssetInput): Promise<Asset>
 ```
 
 Creates a new asset.
@@ -75,7 +78,7 @@ console.log("Created Asset:", newAsset);
 ##### updateAsset
 
 ```typescript
-updateAsset(input: UpdateAssetInput, collectionId: string, assetId: string): Promise<Asset | Error>
+updateAsset(input: UpdateAssetInput, collectionId: string, assetId: string): Promise<Asset>
 ```
 
 Updates an existing asset.
@@ -104,7 +107,7 @@ console.log("Updated Asset:", updated);
 ##### getCollection
 
 ```typescript
-getCollection(collectionId: string): Promise<Collection | Error>
+getCollection(collectionId: string): Promise<Collection>
 ```
 
 Fetches a collection by ID.
@@ -127,7 +130,7 @@ console.log("Collection:", collection);
 ##### createCollection
 
 ```typescript
-createCollection(input: UpsertCollectionInput): Promise<Collection | Error>
+createCollection(input: UpsertCollectionInput): Promise<Collection>
 ```
 
 Creates a new collection.
@@ -154,7 +157,7 @@ console.log("Created Collection:", newCollection);
 ##### updateCollection
 
 ```typescript
-updateCollection(input: UpsertCollectionInput, collectionId: string): Promise<Collection | Error>
+updateCollection(input: UpsertCollectionInput, collectionId: string): Promise<Collection>
 ```
 
 Updates an existing collection.

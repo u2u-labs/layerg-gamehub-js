@@ -16,6 +16,12 @@ export abstract class BaseModule {
     payload?: any,
     label = url
   ): Promise<T> {
+    if (!this.client.internal.isAuthenticated()) {
+      throw new LayerGError(
+        "Client not authenticated. You need to call authenticate before making any request"
+      );
+    }
+
     await this.client.internal.refreshAuthIfNeeded();
 
     return withRetry(
@@ -34,7 +40,10 @@ export abstract class BaseModule {
       },
       this.client.getClientOptions().retry,
       (attempt, err) => {
-        console.warn(`[${this.constructor.name}] ${label} attempt ${attempt} failed`, err);
+        console.warn(
+          `[${this.constructor.name}] ${label} attempt ${attempt} failed`,
+          err
+        );
       }
     );
   }
