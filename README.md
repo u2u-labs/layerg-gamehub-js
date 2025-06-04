@@ -14,15 +14,14 @@ const client = new LayerGGamehubClient("apiKey", "apiKeyId", Environment.Dev, {
   timeout: 10000,
 });
 
-const { isSuccess, error } = await client.authenticate();
+const { isSuccess, error, data } = await client.authenticate();
 
-if (!isSuccess) {
+if (!isAuthenticateSuccess) {
   console.error("Failed to authenticate:", error?.message);
   return;
 }
 
 // continue to call assets/collections methods here
-
 ```
 
 ---
@@ -42,15 +41,14 @@ Fetches an asset by ID within a collection.
 - `assetId`: string — The asset ID.
 - `collectionId`: string — The collection ID.
 
-**Returns:**
-
-- Promise resolving to an Asset or throw Error.
-
 **Example:**
 
 ```typescript
-const asset = await client.assets.getAsset("assetId", "collectionId");
-console.log("Asset:", asset);
+const { data, isSuccess, error } = await client.assets.getAsset(
+  "assetId",
+  "collectionId"
+);
+console.log("Asset: ", data);
 ```
 
 ##### createAsset
@@ -65,19 +63,15 @@ Creates a new asset.
 
 - `input`: CreateAssetInput — Asset creation details.
 
-**Returns:**
-
-- Promise resolving to the created Asset or throw Error.
-
 **Example:**
 
 ```typescript
-const newAsset = await client.assets.createAsset({
+const { data, isSuccess, error } = await client.assets.createAsset({
   name: "New Sword",
   collectionId: "collectionId",
   // ... other fields
 });
-console.log("Created Asset:", newAsset);
+console.log("Created Asset: ", data);
 ```
 
 ##### updateAsset
@@ -94,19 +88,15 @@ Updates an existing asset.
 - `collectionId`: string — Collection ID.
 - `assetId`: string — Asset ID.
 
-**Returns:**
-
-- Promise resolving to the updated Asset or throw Error.
-
 **Example:**
 
 ```typescript
-const updated = await client.assets.updateAsset(
+const { data, isSuccess, error } = await client.assets.updateAsset(
   { name: "Updated Sword" },
   "collectionId",
   "assetId"
 );
-console.log("Updated Asset:", updated);
+console.log("Updated Asset: ", data);
 ```
 
 ##### getCollection
@@ -121,15 +111,13 @@ Fetches a collection by ID.
 
 - `collectionId`: string — The collection ID.
 
-**Returns:**
-
-- Promise resolving to a Collection or throw Error.
-
 **Example:**
 
 ```typescript
-const collection = await client.collections.getCollection("collectionId");
-console.log("Collection:", collection);
+const { data, isSuccess, error } = await client.collections.getCollection(
+  "collectionId"
+);
+console.log("Collection: ", data);
 ```
 
 ##### createCollection
@@ -144,19 +132,15 @@ Creates a new collection.
 
 - `input`: UpsertCollectionInput — Collection creation details.
 
-**Returns:**
-
-- Promise resolving to the created Collection or throw Error.
-
 **Example:**
 
 ```typescript
-const newCollection = await client.collections.createCollection({
+const { data, isSuccess, error } = await client.collections.createCollection({
   name: "Epic Collection",
   description: "A set of rare items",
   // ... other fields
 });
-console.log("Created Collection:", newCollection);
+console.log("Created Collection: ", data);
 ```
 
 ##### updateCollection
@@ -172,18 +156,14 @@ Updates an existing collection.
 - `input`: UpsertCollectionInput — Collection update details.
 - `collectionId`: string — Collection ID.
 
-**Returns:**
-
-- Promise resolving to the updated Collection or throw Error.
-
 **Example:**
 
 ```typescript
-const updated = await client.collections.updateCollection(
+const { data, isSuccess, error } = await client.collections.updateCollection(
   { name: "Updated Collection" },
   "collectionId"
 );
-console.log("Updated Collection:", updated);
+console.log("Updated Collection: ", data);
 ```
 
 ##### publicCollection
@@ -198,33 +178,29 @@ Marks a collection as public.
 
 - `collectionId`: string — The collection ID.
 
-**Returns:**
-
-- Promise resolving to a boolean indicating success.
-
 **Example:**
 
 ```typescript
-const success = await client.collections.publicCollection("collectionId");
-console.log("Collection published:", success);
+const { data, isSuccess, error } = await client.collections.publicCollection(
+  "collectionId"
+);
+console.log("Collection published: ", data);
 ```
 
 ## Error Handling
 
-All methods return either the expected result or an Error object. Always check results:
+All methods return `{ data, isSuccess, error }`:
 
 ```typescript
-try {
-  const asset = await client.assets.getAsset("assetId", "collectionId");
-  console.log("Fetched asset:", asset);
-} catch (err: any) {
-  if (err instanceof LayerGError) {
-    console.error("LayerG SDK Error:", err.message);
-    if (err.cause) {
-      console.error("Details:", err.cause);
-    }
-  } else {
-    console.error("Unknown Error:", err);
-  }
+const { data, isSuccess, error } = await client.assets.getAsset(
+  "assetId",
+  "collectionId"
+);
+
+if (!isSuccess) {
+  console.error("Fetched asset error: ", error?.cause);
+  return;
 }
+
+console.log("Fetched asset successfully: ", data?.id);
 ```

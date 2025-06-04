@@ -1,12 +1,14 @@
+import { LayerGError } from "./error";
+
 export enum Environment {
   Dev = "dev",
   Prod = "prod",
 }
 
 export type ClientOptions = {
-  retry: number,
-  timeout: number
-}
+  retry: number;
+  timeout: number;
+};
 
 export interface Asset {
   id: string;
@@ -166,3 +168,9 @@ export interface AuthResponse {
   accessTokenExpire: number;
   refreshTokenExpire: number;
 }
+
+export type Result<T> = {
+  data?: T;
+  isSuccess: boolean;
+  error?: LayerGError;
+};

@@ -1,6 +1,7 @@
-import { withRetry } from "../utils";
+import { normalizeError, withRetry } from "../utils";
 import { LayerGError } from "../error";
 import { LayerGGamehubClient } from "../client";
+import { Result } from "../types";
 
 export abstract class BaseModule {
   protected client: LayerGGamehubClient;
@@ -14,7 +15,7 @@ export abstract class BaseModule {
     url: string,
     payload?: any,
     label = url
-  ): Promise<T> {
+  ): Promise<Result<T>> {
     if (!this.client.internal.isAuthenticated()) {
       throw new LayerGError(
         "Client not authenticated. You need to call authenticate before making any request"
@@ -32,12 +33,15 @@ export abstract class BaseModule {
             data: payload,
             headers: this.client.internal.getAuthHeader(),
           });
-          return res.data;
+          return {
+            data: res.data,
+            isSuccess: true,
+          };
         } catch (err: any) {
-          throw new LayerGError(
-            `Request failed: ${label}`,
-            err?.response?.data?.message ?? err.message ?? err.toString()
-          );
+          return {
+            error: normalizeError(err),
+            isSuccess: false,
+          };
         }
       },
       this.client.internal.getClientOptions().retry,

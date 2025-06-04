@@ -1,4 +1,5 @@
 import axios, { AxiosError } from "axios";
+import { LayerGError } from "./error";
 
 export function shouldRetry(err: any): boolean {
   if (!axios.isAxiosError(err)) {
@@ -48,4 +49,27 @@ export async function withRetry<T>(
   }
 
   throw new Error("Unreachable");
+}
+
+export function normalizeError(
+  err: any,
+  contextMessage = "Unknown SDK error"
+): LayerGError {
+  if (err instanceof LayerGError) return err;
+
+  if (err && typeof err === "object") {
+    if ((err as AxiosError).isAxiosError) {
+      return new LayerGError(contextMessage, {
+        code: "HTTP_ERROR",
+        statusCode: err.response?.status,
+        cause: err.response?.data?.message ?? String(err),
+      });
+    }
+    return new LayerGError(contextMessage, {
+      cause: err.response?.data?.message ?? String(err),
+    });
+  }
+  return new LayerGError(contextMessage, {
+    cause: err.response?.data?.message ?? String(err),
+  });
 }

@@ -1,8 +1,9 @@
 import axios, { AxiosInstance } from "axios";
 import { baseUrls } from "./config";
-import { ClientOptions, AuthResponse, Environment } from "./types";
+import { ClientOptions, AuthResponse, Environment, Result } from "./types";
 import { AssetsModule } from "./modules/assets.module";
 import { CollectionsModule } from "./modules/collections.module";
+import { normalizeError } from "./utils";
 
 export class LayerGGamehubClient {
   private apiKey: string;
@@ -58,7 +59,7 @@ export class LayerGGamehubClient {
     return { Authorization: `Bearer ${this.accessToken}` };
   }
 
-  public async authenticate(): Promise<{ isSuccess: boolean; error?: Error }> {
+  public async authenticate(): Promise<Result<AuthResponse>> {
     try {
       const res = await this.axios.post<AuthResponse>("/auth/login", {
         apiKey: this.apiKey,
@@ -66,13 +67,14 @@ export class LayerGGamehubClient {
       });
       this.#setTokenInfo(res.data);
       return {
+        data: res.data,
         isSuccess: true,
       };
     } catch (err: any) {
       this.#setTokenInfo(null);
       return {
         isSuccess: false,
-        error: new Error(err.response.data.message.toString()),
+        error: normalizeError(err),
       };
     }
   }
