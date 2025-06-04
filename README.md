@@ -7,7 +7,7 @@
 **Example:**
 
 ```typescript
-import { LayerGGamehubClient, Environment } from "layerg-gamehub-client";
+import { LayerGGamehubClient, Environment } from "layerg-gamehub-js";
 
 const client = new LayerGGamehubClient("apiKey", "apiKeyId", Environment.Dev, {
   retry: 3,
@@ -31,7 +31,7 @@ if (!isAuthenticateSuccess) {
 ##### getAsset
 
 ```typescript
-getAsset(assetId: string, collectionId: string): Promise<Asset>
+getAsset(assetId: string, collectionId: string): Promise<Result<Asset>>
 ```
 
 Fetches an asset by ID within a collection.
@@ -54,7 +54,7 @@ console.log("Asset: ", data);
 ##### createAsset
 
 ```typescript
-createAsset(input: CreateAssetInput): Promise<Asset>
+createAsset(input: CreateAssetInput): Promise<Result<Asset>>
 ```
 
 Creates a new asset.
@@ -77,7 +77,7 @@ console.log("Created Asset: ", data);
 ##### updateAsset
 
 ```typescript
-updateAsset(input: UpdateAssetInput, collectionId: string, assetId: string): Promise<Asset>
+updateAsset(input: UpdateAssetInput, collectionId: string, assetId: string): Promise<Result<Asset>>
 ```
 
 Updates an existing asset.
@@ -102,7 +102,7 @@ console.log("Updated Asset: ", data);
 ##### getCollection
 
 ```typescript
-getCollection(collectionId: string): Promise<Collection>
+getCollection(collectionId: string): Promise<Result<Collection>>
 ```
 
 Fetches a collection by ID.
@@ -123,7 +123,7 @@ console.log("Collection: ", data);
 ##### createCollection
 
 ```typescript
-createCollection(input: UpsertCollectionInput): Promise<Collection>
+createCollection(input: UpsertCollectionInput): Promise<Result<Collection>>
 ```
 
 Creates a new collection.
@@ -146,7 +146,7 @@ console.log("Created Collection: ", data);
 ##### updateCollection
 
 ```typescript
-updateCollection(input: UpsertCollectionInput, collectionId: string): Promise<Collection>
+updateCollection(input: UpsertCollectionInput, collectionId: string): Promise<Result<Collection>>
 ```
 
 Updates an existing collection.
@@ -169,7 +169,7 @@ console.log("Updated Collection: ", data);
 ##### publicCollection
 
 ```typescript
-publicCollection(collectionId: string): Promise<boolean>
+publicCollection(collectionId: string): Promise<Result<Collection>>
 ```
 
 Marks a collection as public.
