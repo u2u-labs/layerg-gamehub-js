@@ -1,4 +1,3 @@
-import { AxiosInstance } from "axios";
 import { withRetry } from "../utils";
 import { LayerGError } from "../error";
 import { LayerGGamehubClient } from "../client";
@@ -27,7 +26,7 @@ export abstract class BaseModule {
     return withRetry(
       async () => {
         try {
-          const res = await this.client.getAxios().request<T>({
+          const res = await this.client.internal.getAxios().request<T>({
             method,
             url,
             data: payload,
@@ -38,7 +37,7 @@ export abstract class BaseModule {
           throw new LayerGError(`Request failed: ${label}`, err);
         }
       },
-      this.client.getClientOptions().retry,
+      this.client.internal.getClientOptions().retry,
       (attempt, err) => {
         console.warn(
           `[${this.constructor.name}] ${label} attempt ${attempt} failed`,

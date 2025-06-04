@@ -41,7 +41,7 @@ export class CollectionsModule extends BaseModule {
     return withRetry(
       async () => {
         try {
-          await this.client
+          await this.client.internal
             .getAxios()
             .post(`/collection/public/${collectionId}`, null, {
               headers: this.client.internal.getAuthHeader(),
@@ -55,7 +55,7 @@ export class CollectionsModule extends BaseModule {
           return false;
         }
       },
-      this.client.getClientOptions().retry,
+      this.client.internal.getClientOptions().retry,
       (attempt, err) => {
         console.warn(
           `[CollectionClient] POST /collection/public/${collectionId} attempt ${attempt} failed`,

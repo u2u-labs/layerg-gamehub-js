@@ -93,7 +93,15 @@ export class LayerGGamehubClient {
   }
 
   #isAuthenticated(): boolean {
-    return !!this.accessToken && Date.now() < this.accessTokenExpire;
+    return !!this.refreshToken && Date.now() < this.refreshTokenExpire;
+  }
+
+  #getAxios() {
+    return this.axios;
+  }
+
+  #getClientOptions() {
+    return this.clientOptions;
   }
 
   /** @internal - Do not use outside the SDK */
@@ -101,17 +109,13 @@ export class LayerGGamehubClient {
     refreshAuthIfNeeded: () => Promise<void>;
     getAuthHeader: () => { Authorization: string };
     isAuthenticated: () => boolean;
+    getAxios: () => AxiosInstance;
+    getClientOptions: () => ClientOptions;
   } = {
     refreshAuthIfNeeded: () => this.#refreshAuthIfNeeded(),
     getAuthHeader: () => this.#getAuthHeader(),
     isAuthenticated: () => this.#isAuthenticated(),
+    getAxios: () => this.#getAxios(),
+    getClientOptions: () => this.#getClientOptions(),
   };
-
-  getAxios() {
-    return this.axios;
-  }
-
-  getClientOptions() {
-    return this.clientOptions;
-  }
 }
