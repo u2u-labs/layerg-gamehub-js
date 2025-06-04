@@ -7,7 +7,7 @@
 **Example:**
 
 ```typescript
-import { LayerGGamehubClient } from "layerg-gamehub-client";
+import { LayerGGamehubClient, Environment } from "layerg-gamehub-client";
 
 const client = new LayerGGamehubClient(
   "apiKey",
