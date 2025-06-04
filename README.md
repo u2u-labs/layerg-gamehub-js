@@ -189,7 +189,7 @@ console.log("Collection published: ", data);
 
 ## Error Handling
 
-All methods return `{ data, isSuccess, error }`:
+All methods return ```{ data, isSuccess, error }```. If ```isSuccess === false```, check ```error``` to get the error's cause: 
 
 ```typescript
 const { data, isSuccess, error } = await client.assets.getAsset(
