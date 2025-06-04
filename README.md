@@ -39,7 +39,7 @@ Fetches an asset by ID within a collection.
 
 **Returns:**
 
-- Promise resolving to an Asset or Error.
+- Promise resolving to an Asset or throw Error.
 
 **Example:**
 
@@ -62,7 +62,7 @@ Creates a new asset.
 
 **Returns:**
 
-- Promise resolving to the created Asset or Error.
+- Promise resolving to the created Asset or throw Error.
 
 **Example:**
 
@@ -91,7 +91,7 @@ Updates an existing asset.
 
 **Returns:**
 
-- Promise resolving to the updated Asset or Error.
+- Promise resolving to the updated Asset or throw Error.
 
 **Example:**
 
@@ -118,7 +118,7 @@ Fetches a collection by ID.
 
 **Returns:**
 
-- Promise resolving to a Collection or Error.
+- Promise resolving to a Collection or throw Error.
 
 **Example:**
 
@@ -141,7 +141,7 @@ Creates a new collection.
 
 **Returns:**
 
-- Promise resolving to the created Collection or Error.
+- Promise resolving to the created Collection or throw Error.
 
 **Example:**
 
@@ -169,7 +169,7 @@ Updates an existing collection.
 
 **Returns:**
 
-- Promise resolving to the updated Collection or Error.
+- Promise resolving to the updated Collection or throw Error.
 
 **Example:**
 
