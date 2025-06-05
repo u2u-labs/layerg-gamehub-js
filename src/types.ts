@@ -1,8 +1,8 @@
 import { LayerGError } from "./error";
 
 export enum Environment {
-  Dev = "dev",
-  Prod = "prod",
+  Development = "Development",
+  Production = "Production",
 }
 
 export type ClientOptions = {

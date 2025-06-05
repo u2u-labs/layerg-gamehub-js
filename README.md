@@ -9,9 +9,14 @@
 ```typescript
 import { LayerGGamehubClient, Environment } from "layerg-gamehub-js";
 
-const client = new LayerGGamehubClient("apiKey", "apiKeyId", Environment.Dev, {
-  retry: 3,
-  timeout: 10000,
+const client = new LayerGGamehubClient({
+  apiKey: "apiKey",
+  apiKeyId: "apiKeyId",
+  env: Environment.Dev,
+  clientOptions: {
+    retry: 3,
+    timeout: 10000,
+  },
 });
 
 const { isSuccess, error, data } = await client.authenticate();
@@ -21,17 +26,19 @@ if (!isSuccess) {
   return;
 }
 
-// continue to call assets/collections methods here
+// continue to call asset/collection methods here
 ```
 
 ---
 
+### Asset
+
 #### Methods
 
-##### getAsset
+##### get
 
 ```typescript
-getAsset(assetId: string, collectionId: string): Promise<Result<Asset>>
+get(assetId: string, collectionId: string): Promise<Result<Asset>>
 ```
 
 Fetches an asset by ID within a collection.
@@ -44,17 +51,17 @@ Fetches an asset by ID within a collection.
 **Example:**
 
 ```typescript
-const { data, isSuccess, error } = await client.assets.getAsset(
+const { data, isSuccess, error } = await client.asset.get(
   "assetId",
   "collectionId"
 );
 console.log("Asset: ", data);
 ```
 
-##### createAsset
+##### create
 
 ```typescript
-createAsset(input: CreateAssetInput): Promise<Result<Asset>>
+create(input: CreateAssetInput): Promise<Result<Asset>>
 ```
 
 Creates a new asset.
@@ -66,7 +73,7 @@ Creates a new asset.
 **Example:**
 
 ```typescript
-const { data, isSuccess, error } = await client.assets.createAsset({
+const { data, isSuccess, error } = await client.asset.create({
   name: "New Sword",
   collectionId: "collectionId",
   // ... other fields
@@ -74,10 +81,10 @@ const { data, isSuccess, error } = await client.assets.createAsset({
 console.log("Created Asset: ", data);
 ```
 
-##### updateAsset
+##### update
 
 ```typescript
-updateAsset(input: UpdateAssetInput, collectionId: string, assetId: string): Promise<Result<Asset>>
+update(input: UpdateAssetInput, collectionId: string, assetId: string): Promise<Result<Asset>>
 ```
 
 Updates an existing asset.
@@ -91,7 +98,7 @@ Updates an existing asset.
 **Example:**
 
 ```typescript
-const { data, isSuccess, error } = await client.assets.updateAsset(
+const { data, isSuccess, error } = await client.asset.update(
   { name: "Updated Sword" },
   "collectionId",
   "assetId"
@@ -99,10 +106,12 @@ const { data, isSuccess, error } = await client.assets.updateAsset(
 console.log("Updated Asset: ", data);
 ```
 
-##### getCollection
+### Collection
+
+##### get
 
 ```typescript
-getCollection(collectionId: string): Promise<Result<Collection>>
+get(collectionId: string): Promise<Result<Collection>>
 ```
 
 Fetches a collection by ID.
@@ -114,16 +123,14 @@ Fetches a collection by ID.
 **Example:**
 
 ```typescript
-const { data, isSuccess, error } = await client.collections.getCollection(
-  "collectionId"
-);
+const { data, isSuccess, error } = await client.collection.get("collectionId");
 console.log("Collection: ", data);
 ```
 
-##### createCollection
+##### create
 
 ```typescript
-createCollection(input: UpsertCollectionInput): Promise<Result<Collection>>
+create(input: UpsertCollectionInput): Promise<Result<Collection>>
 ```
 
 Creates a new collection.
@@ -135,7 +142,7 @@ Creates a new collection.
 **Example:**
 
 ```typescript
-const { data, isSuccess, error } = await client.collections.createCollection({
+const { data, isSuccess, error } = await client.collection.create({
   name: "Epic Collection",
   description: "A set of rare items",
   // ... other fields
@@ -143,10 +150,10 @@ const { data, isSuccess, error } = await client.collections.createCollection({
 console.log("Created Collection: ", data);
 ```
 
-##### updateCollection
+##### update
 
 ```typescript
-updateCollection(input: UpsertCollectionInput, collectionId: string): Promise<Result<Collection>>
+update(input: UpsertCollectionInput, collectionId: string): Promise<Result<Collection>>
 ```
 
 Updates an existing collection.
@@ -159,20 +166,20 @@ Updates an existing collection.
 **Example:**
 
 ```typescript
-const { data, isSuccess, error } = await client.collections.updateCollection(
+const { data, isSuccess, error } = await client.collection.update(
   { name: "Updated Collection" },
   "collectionId"
 );
 console.log("Updated Collection: ", data);
 ```
 
-##### publicCollection
+##### public
 
 ```typescript
-publicCollection(collectionId: string): Promise<Result<Collection>>
+public(collectionId: string): Promise<Result<Collection>>
 ```
 
-Marks a collection as public.
+Public a collection to the marketplace.
 
 **Parameters:**
 
@@ -181,18 +188,18 @@ Marks a collection as public.
 **Example:**
 
 ```typescript
-const { data, isSuccess, error } = await client.collections.publicCollection(
+const { data, isSuccess, error } = await client.collection.public(
   "collectionId"
 );
-console.log("Collection published: ", data);
+console.log("Collection public: ", data);
 ```
 
 ## Error Handling
 
-All methods return ```{ data, isSuccess, error }```. If ```isSuccess === false```, check ```error``` to get the error's cause: 
+All methods return `{ data, isSuccess, error }`. If `isSuccess === false`, check `error` to get the error's cause:
 
 ```typescript
-const { data, isSuccess, error } = await client.assets.getAsset(
+const { data, isSuccess, error } = await client.asset.get(
   "assetId",
   "collectionId"
 );
