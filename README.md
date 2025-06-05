@@ -143,6 +143,33 @@ if (isSuccess) {
 }
 ```
 
+##### delete
+
+```typescript
+delete(input: DeleteAssetInput): Promise<Result<DeleteAssetSuccessResponse>>
+```
+
+Delete an existing asset.
+
+**Parameters:**
+
+- `input`: DeleteAssetInput
+
+**Example:**
+
+```typescript
+const input: DeleteAssetInput = {
+  collectionId: "COLLECTION_ID",
+  tokenId: "TOKEN_ID",
+};
+
+const { data, isSuccess, error } = await client.asset.update(input);
+
+if (isSuccess) {
+  console.log("Asset deleted!");
+}
+```
+
 ### Collection
 
 ##### get

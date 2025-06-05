@@ -194,3 +194,12 @@ export interface GetByTokenIdInput {
   tokenId: string;
   collectionId: string;
 }
+
+export interface DeleteAssetInput {
+  tokenId: string;
+  collectionId: string;
+}
+
+export interface DeleteAssetSuccessResponse {
+  message: string;
+}
