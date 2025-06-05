@@ -103,7 +103,7 @@ if (isSuccess) {
 ##### update
 
 ```typescript
-update(input: UpdateAssetInput, collectionId: string, assetId: string): Promise<Result<Asset>>
+update(input: UpdateAssetInput): Promise<Result<Asset>>
 ```
 
 Updates an existing asset.
