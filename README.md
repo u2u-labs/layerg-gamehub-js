@@ -9,9 +9,14 @@
 ```typescript
 import { LayerGGamehubClient, Environment } from "layerg-gamehub-js";
 
-const client = new LayerGGamehubClient("apiKey", "apiKeyId", Environment.Dev, {
-  retry: 3,
-  timeout: 10000,
+const client = new LayerGGamehubClient({
+  apiKey: "apiKey",
+  apiKeyId: "apiKeyId",
+  env: Environment.Development,
+  clientOptions: {
+    retry: 3,
+    timeout: 10000,
+  },
 });
 
 const { isSuccess, error, data } = await client.authenticate();
@@ -21,158 +26,260 @@ if (!isSuccess) {
   return;
 }
 
-// continue to call assets/collections methods here
+// continue to call asset/collection methods here
 ```
 
 ---
 
+### Asset
+
 #### Methods
 
-##### getAsset
+##### getByTokenId
 
 ```typescript
-getAsset(assetId: string, collectionId: string): Promise<Result<Asset>>
+getByTokenId(input: GetByTokenIdInput): Promise<Result<Asset>>
 ```
 
-Fetches an asset by ID within a collection.
+Fetches an asset by token id within a collection.
 
 **Parameters:**
 
-- `assetId`: string — The asset ID.
-- `collectionId`: string — The collection ID.
+- `input`: GetByTokenIdInput
 
 **Example:**
 
 ```typescript
-const { data, isSuccess, error } = await client.assets.getAsset(
-  "assetId",
-  "collectionId"
-);
-console.log("Asset: ", data);
+const input: GetByTokenIdInput = {
+  collectionId: "COLLECTION_ID",
+  tokenId: "TOKEN_ID",
+};
+
+const { data, isSuccess, error } = await client.asset.getByTokenId(input);
+
+if (isSuccess) {
+  console.log("Asset: ", data);
+}
 ```
 
-##### createAsset
+##### create
 
 ```typescript
-createAsset(input: CreateAssetInput): Promise<Result<Asset>>
+create(input: CreateAssetInput): Promise<Result<Asset>>
 ```
 
 Creates a new asset.
 
 **Parameters:**
 
-- `input`: CreateAssetInput — Asset creation details.
+- `input`: CreateAssetInput
 
 **Example:**
 
 ```typescript
-const { data, isSuccess, error } = await client.assets.createAsset({
-  name: "New Sword",
-  collectionId: "collectionId",
-  // ... other fields
-});
-console.log("Created Asset: ", data);
+const input: CreateAssetInput = {
+  name: "test",
+  description: "test",
+  tokenId: "TOKEN_ID",
+  collectionId: "COLLECTION_ID",
+  quantity: "1",
+  media: {
+    S3Url: "",
+  },
+  metadata: {
+    metadata: {
+      attributes: [],
+    },
+  },
+};
+
+const { data, isSuccess, error } = await client.asset.create(input);
+
+if (isSuccess) {
+  console.log("Created Asset: ", data);
+}
 ```
 
-##### updateAsset
+##### update
 
 ```typescript
-updateAsset(input: UpdateAssetInput, collectionId: string, assetId: string): Promise<Result<Asset>>
+update(input: UpdateAssetInput): Promise<Result<Asset>>
 ```
 
 Updates an existing asset.
 
 **Parameters:**
 
-- `input`: UpdateAssetInput — Asset update details.
-- `collectionId`: string — Collection ID.
-- `assetId`: string — Asset ID.
+- `input`: UpdateAssetInput
 
 **Example:**
 
 ```typescript
-const { data, isSuccess, error } = await client.assets.updateAsset(
-  { name: "Updated Sword" },
-  "collectionId",
-  "assetId"
-);
-console.log("Updated Asset: ", data);
+const input: UpdateAssetInput = {
+  data: {
+    name: "test",
+    description: "test",
+    tokenId: "TOKEN_ID",
+    quantity: "1",
+    media: {
+      S3Url: "",
+    },
+    metadata: {
+      metadata: {
+        attributes: [],
+      },
+    },
+  },
+  where: {
+    collectionId: "COLLECTION_ID",
+    assetId: "ASSET_ID",
+  },
+};
+
+const { data, isSuccess, error } = await client.asset.update(input);
+
+if (isSuccess) {
+  console.log("Updated Asset: ", data);
+}
 ```
 
-##### getCollection
+##### delete
 
 ```typescript
-getCollection(collectionId: string): Promise<Result<Collection>>
+delete(input: DeleteAssetInput): Promise<Result<DeleteAssetSuccessResponse>>
+```
+
+Delete an existing asset.
+
+**Parameters:**
+
+- `input`: DeleteAssetInput
+
+**Example:**
+
+```typescript
+const input: DeleteAssetInput = {
+  collectionId: "COLLECTION_ID",
+  tokenId: "TOKEN_ID",
+};
+
+const { data, isSuccess, error } = await client.asset.delete(input);
+
+if (isSuccess) {
+  console.log("Asset deleted!");
+}
+```
+
+### Collection
+
+##### get
+
+```typescript
+getById(collectionId: string): Promise<Result<Collection>>
 ```
 
 Fetches a collection by ID.
 
 **Parameters:**
 
-- `collectionId`: string — The collection ID.
+- `collectionId`: string
 
 **Example:**
 
 ```typescript
-const { data, isSuccess, error } = await client.collections.getCollection(
+const { data, isSuccess, error } = await client.collection.getById(
   "collectionId"
 );
-console.log("Collection: ", data);
+
+if (isSuccess) {
+  console.log("Collection: ", data);
+}
 ```
 
-##### createCollection
+##### create
 
 ```typescript
-createCollection(input: UpsertCollectionInput): Promise<Result<Collection>>
+create(input: CreateCollectionInput): Promise<Result<Collection>>
 ```
 
 Creates a new collection.
 
 **Parameters:**
 
-- `input`: UpsertCollectionInput — Collection creation details.
+- `input`: CreateCollectionInput
 
 **Example:**
 
 ```typescript
-const { data, isSuccess, error } = await client.collections.createCollection({
-  name: "Epic Collection",
-  description: "A set of rare items",
-  // ... other fields
-});
-console.log("Created Collection: ", data);
+const input: CreateCollectionInput = {
+  name: "test",
+  description: "test",
+  avatarUrl: "https://example.com/avatar.png",
+  projectId: "PROJECT_ID",
+  smc: {
+    contractAddress: "0x1234567890abcdef",
+    contractType: "ERC721",
+    networkID: 1,
+    tokenSymbol: "TEST",
+    totalSupply: 10000,
+  },
+};
+
+const { data, isSuccess, error } = await client.collection.create(input);
+
+if (isSuccess) {
+  console.log("Created Collection: ", data);
+}
 ```
 
-##### updateCollection
+##### update
 
 ```typescript
-updateCollection(input: UpsertCollectionInput, collectionId: string): Promise<Result<Collection>>
+update(input: UpdateCollectionInput): Promise<Result<Collection>>
 ```
 
 Updates an existing collection.
 
 **Parameters:**
 
-- `input`: UpsertCollectionInput — Collection update details.
-- `collectionId`: string — Collection ID.
+- `input`: UpdateCollectionInput
 
 **Example:**
 
 ```typescript
-const { data, isSuccess, error } = await client.collections.updateCollection(
-  { name: "Updated Collection" },
-  "collectionId"
-);
-console.log("Updated Collection: ", data);
+const input: UpdateCollectionInput = {
+  data: {
+    name: "test",
+    description: "test",
+    avatarUrl: "https://example.com/avatar.png",
+    projectId: "PROJECT_ID",
+    smc: {
+      contractAddress: "0x1234567890abcdef",
+      contractType: "ERC721",
+      networkID: 1,
+      tokenSymbol: "TEST",
+      totalSupply: 10000,
+    },
+  },
+  where: {
+    collectionId: "COLLECTION_ID",
+  },
+};
+
+const { data, isSuccess, error } = await client.collection.update(input);
+
+if (isSuccess) {
+  console.log("Updated Collection: ", data);
+}
 ```
 
-##### publicCollection
+##### public
 
 ```typescript
-publicCollection(collectionId: string): Promise<Result<Collection>>
+public(collectionId: string): Promise<Result<Collection>>
 ```
 
-Marks a collection as public.
+Public a collection to the marketplace.
 
 **Parameters:**
 
@@ -181,18 +288,20 @@ Marks a collection as public.
 **Example:**
 
 ```typescript
-const { data, isSuccess, error } = await client.collections.publicCollection(
+const { data, isSuccess, error } = await client.collection.public(
   "collectionId"
 );
-console.log("Collection published: ", data);
+if (isSuccess) {
+  console.log("Collection public: ", data);
+}
 ```
 
 ## Error Handling
 
-All methods return ```{ data, isSuccess, error }```. If ```isSuccess === false```, check ```error``` to get the error's cause: 
+All methods return `{ data, isSuccess, error }`. If `isSuccess === false`, check `error` to get the error's cause:
 
 ```typescript
-const { data, isSuccess, error } = await client.assets.getAsset(
+const { data, isSuccess, error } = await client.asset.get(
   "assetId",
   "collectionId"
 );

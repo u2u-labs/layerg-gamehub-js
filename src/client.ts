@@ -1,8 +1,8 @@
 import axios, { AxiosInstance } from "axios";
 import { baseUrls } from "./config";
 import { ClientOptions, AuthResponse, Environment, Result } from "./types";
-import { AssetsModule } from "./modules/assets.module";
-import { CollectionsModule } from "./modules/collections.module";
+import { AssetModule } from "./modules/asset";
+import { CollectionModule } from "./modules/collection";
 import { normalizeError } from "./utils";
 
 export class LayerGGamehubClient {
@@ -16,15 +16,30 @@ export class LayerGGamehubClient {
   private clientOptions: ClientOptions;
   private refreshPromise: Promise<void> | null = null;
 
-  public assets: AssetsModule;
-  public collections: CollectionsModule;
+  public asset: AssetModule;
+  public collection: CollectionModule;
 
-  constructor(
-    apiKey: string,
-    apiKeyId: string,
-    env: Environment,
-    clientOptions: ClientOptions = { retry: 1, timeout: 10000 }
-  ) {
+  /**
+   * @description Create a new LayerGGamehubClient instance with the given api key and api key id.
+   * @param params {
+   *  apiKey: string;
+   *  apiKeyId: string;
+   *  env: Environment;
+   *  clientOptions: ClientOptions;
+   */
+  constructor(params: {
+    apiKey: string;
+    apiKeyId: string;
+    env: Environment;
+    clientOptions: ClientOptions;
+  }) {
+    const {
+      apiKey,
+      apiKeyId,
+      env,
+      clientOptions = { retry: 1, timeout: 10000 },
+    } = params;
+
     this.#validateApiKeys(apiKey, apiKeyId);
     this.apiKey = apiKey;
     this.apiKeyId = apiKeyId;
@@ -35,8 +50,8 @@ export class LayerGGamehubClient {
       timeout: clientOptions.timeout,
     });
 
-    this.assets = new AssetsModule(this);
-    this.collections = new CollectionsModule(this);
+    this.asset = new AssetModule(this);
+    this.collection = new CollectionModule(this);
   }
 
   #validateApiKeys(apiKey: string, apiKeyId: string): void {
@@ -59,7 +74,11 @@ export class LayerGGamehubClient {
   #getAuthHeader() {
     return { Authorization: `Bearer ${this.accessToken}` };
   }
-
+  
+  /**
+   * @description Authenticate with the LayerGGamehub API using the provided API key and API key ID in the constructor. Needs to be called before making any requests.
+   * @returns `Result<AuthResponse>`
+   */
   public async authenticate(): Promise<Result<AuthResponse>> {
     try {
       const res = await this.axios.post<AuthResponse>("/auth/login", {

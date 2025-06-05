@@ -1,8 +1,8 @@
 import { LayerGError } from "./error";
 
 export enum Environment {
-  Dev = "dev",
-  Prod = "prod",
+  Development = "Development",
+  Production = "Production",
 }
 
 export type ClientOptions = {
@@ -49,12 +49,18 @@ export interface CreateAssetInput {
 }
 
 export interface UpdateAssetInput {
-  name: string;
-  description: string;
-  tokenId?: string;
-  quantity: string;
-  media: Media;
-  metadata: Metadata;
+  data: {
+    name: string;
+    description: string;
+    tokenId?: string;
+    quantity: string;
+    media: Media;
+    metadata: Metadata;
+  };
+  where: {
+    collectionId: string;
+    assetId: string;
+  };
 }
 
 export interface Media {
@@ -91,12 +97,21 @@ export interface Collection {
   SmartContract: SmartContract[];
 }
 
-export interface UpsertCollectionInput {
+export interface UpdateCollectionData {
   name: string;
   description: string;
   avatarUrl: string;
   projectId: string;
   smc: SMC;
+}
+
+export interface CreateCollectionInput extends UpdateCollectionData {}
+
+export interface UpdateCollectionInput {
+  data: UpdateCollectionData;
+  where: {
+    collectionId: string;
+  };
 }
 
 export interface SMC {
@@ -174,3 +189,17 @@ export type Result<T> = {
   isSuccess: boolean;
   error?: LayerGError;
 };
+
+export interface GetByTokenIdInput {
+  tokenId: string;
+  collectionId: string;
+}
+
+export interface DeleteAssetInput {
+  tokenId: string;
+  collectionId: string;
+}
+
+export interface DeleteAssetSuccessResponse {
+  message: string;
+}
