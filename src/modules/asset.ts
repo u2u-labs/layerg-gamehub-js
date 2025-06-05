@@ -1,17 +1,22 @@
 import { BaseModule } from "./base";
-import { Asset, CreateAssetInput, Result, UpdateAssetInput } from "../types";
+import {
+  Asset,
+  CreateAssetInput,
+  GetByTokenIdInput,
+  Result,
+  UpdateAssetInput,
+} from "../types";
 
 export class AssetModule extends BaseModule {
   /**
-   * @description Get an asset by id and collection id
-   * @param assetId: string
-   * @param collectionId: string
+   * @description Get an asset by token id and collection id
+   * @param input: GetByTokenIdInput
    * @returns `Result<Asset>`
    */
-  async get(assetId: string, collectionId: string): Promise<Result<Asset>> {
+  async getByTokenId(input: GetByTokenIdInput): Promise<Result<Asset>> {
     return this.handleRequest<Asset>(
       "get",
-      `/assets/${collectionId}/${assetId}`
+      `/assets/${input.collectionId}/${input.tokenId}`
     );
   }
 
@@ -31,19 +36,16 @@ export class AssetModule extends BaseModule {
   /**
    * @description Update an asset
    * @param updateAssetInput: UpdateAssetInput
-   * @param collectionId: string
-   * @param assetId: string
    * @returns `Result<Asset>`
    */
-  async udpdate(
-    updateAssetInput: UpdateAssetInput,
-    collectionId: string,
-    assetId: string
-  ): Promise<Result<Asset>> {
+  async update(updateAssetInput: UpdateAssetInput): Promise<Result<Asset>> {
+    const { data, where } = updateAssetInput;
+    const { collectionId, assetId } = where;
+
     return this.handleRequest<Asset>(
       "put",
       `/assets/${collectionId}/${assetId}`,
-      updateAssetInput
+      data
     );
   }
 }

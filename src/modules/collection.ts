@@ -1,5 +1,10 @@
 import { BaseModule } from "./base";
-import { Collection, Result, UpsertCollectionInput } from "../types";
+import {
+  Collection,
+  CreateCollectionInput,
+  Result,
+  UpdateCollectionInput,
+} from "../types";
 
 export class CollectionModule extends BaseModule {
   /**
@@ -7,17 +12,17 @@ export class CollectionModule extends BaseModule {
    * @param collectionId: string
    * @returns `Result<Collection>`
    */
-  async get(collectionId: string): Promise<Result<Collection>> {
+  async getById(collectionId: string): Promise<Result<Collection>> {
     return this.handleRequest<Collection>("get", `/collection/${collectionId}`);
   }
 
   /**
    * @description Create a new collection
-   * @param createCollectionInput: UpsertCollectionInput
+   * @param createCollectionInput: CreateCollectionInput
    * @returns `Result<Collection>`
    */
   async create(
-    createCollectionInput: UpsertCollectionInput
+    createCollectionInput: CreateCollectionInput
   ): Promise<Result<Collection>> {
     return this.handleRequest<Collection>(
       "post",
@@ -28,18 +33,21 @@ export class CollectionModule extends BaseModule {
 
   /**
    * @description Update a collection
-   * @param updateCollectionInput: UpsertCollectionInput
-   * @param collectionId: string
+   * @param updateCollectionInput: UpdateCollectionInput
    * @returns `Result<Collection>`
    */
   async update(
-    updateCollectionInput: UpsertCollectionInput,
-    collectionId: string
+    updateCollectionInput: UpdateCollectionInput
   ): Promise<Result<Collection>> {
+    const {
+      data,
+      where: { collectionId },
+    } = updateCollectionInput;
+
     return this.handleRequest<Collection>(
       "put",
       `/collection/${collectionId}`,
-      updateCollectionInput
+      data
     );
   }
 

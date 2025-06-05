@@ -1,3 +1,4 @@
+import { UpsertCollectionInput } from "./../dist/types.d";
 import { LayerGError } from "./error";
 
 export enum Environment {
@@ -49,12 +50,18 @@ export interface CreateAssetInput {
 }
 
 export interface UpdateAssetInput {
-  name: string;
-  description: string;
-  tokenId?: string;
-  quantity: string;
-  media: Media;
-  metadata: Metadata;
+  data: {
+    name: string;
+    description: string;
+    tokenId?: string;
+    quantity: string;
+    media: Media;
+    metadata: Metadata;
+  };
+  where: {
+    collectionId: string;
+    assetId: string;
+  };
 }
 
 export interface Media {
@@ -91,12 +98,21 @@ export interface Collection {
   SmartContract: SmartContract[];
 }
 
-export interface UpsertCollectionInput {
+export interface UpsertCollectionData {
   name: string;
   description: string;
   avatarUrl: string;
   projectId: string;
   smc: SMC;
+}
+
+export interface CreateCollectionInput extends UpsertCollectionData {}
+
+export interface UpdateCollectionInput {
+  data: UpsertCollectionData;
+  where: {
+    collectionId: string;
+  };
 }
 
 export interface SMC {
@@ -174,3 +190,8 @@ export type Result<T> = {
   isSuccess: boolean;
   error?: LayerGError;
 };
+
+export interface GetByTokenIdInput {
+  tokenId: string;
+  collectionId: string;
+}
