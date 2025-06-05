@@ -97,7 +97,7 @@ export interface Collection {
   SmartContract: SmartContract[];
 }
 
-export interface UpsertCollectionData {
+export interface UpdateCollectionData {
   name: string;
   description: string;
   avatarUrl: string;
@@ -105,10 +105,10 @@ export interface UpsertCollectionData {
   smc: SMC;
 }
 
-export interface CreateCollectionInput extends UpsertCollectionData {}
+export interface CreateCollectionInput extends UpdateCollectionData {}
 
 export interface UpdateCollectionInput {
-  data: UpsertCollectionData;
+  data: UpdateCollectionData;
   where: {
     collectionId: string;
   };
