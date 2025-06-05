@@ -1,4 +1,3 @@
-import { UpsertCollectionInput } from "./../dist/types.d";
 import { LayerGError } from "./error";
 
 export enum Environment {
