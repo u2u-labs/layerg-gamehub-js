@@ -163,7 +163,7 @@ const input: DeleteAssetInput = {
   tokenId: "TOKEN_ID",
 };
 
-const { data, isSuccess, error } = await client.asset.update(input);
+const { data, isSuccess, error } = await client.asset.delete(input);
 
 if (isSuccess) {
   console.log("Asset deleted!");
