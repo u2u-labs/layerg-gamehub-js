@@ -14,6 +14,7 @@ export class LayerGGamehubClient {
   private refreshTokenExpire = 0;
   private axios: AxiosInstance;
   private clientOptions: ClientOptions;
+  private refreshPromise: Promise<void> | null = null;
 
   public assets: AssetsModule;
   public collections: CollectionsModule;
@@ -93,11 +94,26 @@ export class LayerGGamehubClient {
 
   async #refreshAuthIfNeeded(): Promise<void> {
     const now = Date.now();
-    if (now >= this.refreshTokenExpire) {
-      await this.authenticate();
-    } else if (now >= this.accessTokenExpire) {
-      await this.#refreshAccessToken();
+
+    if (this.refreshPromise) {
+      await this.refreshPromise;
+      return;
     }
+
+    const doRefresh = async () => {
+      try {
+        if (now >= this.refreshTokenExpire) {
+          await this.authenticate();
+        } else {
+          await this.#refreshAccessToken();
+        }
+      } finally {
+        this.refreshPromise = null;
+      }
+    };
+
+    this.refreshPromise = doRefresh();
+    await this.refreshPromise;
   }
 
   #isAuthenticated(): boolean {
