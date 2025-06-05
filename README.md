@@ -12,7 +12,7 @@ import { LayerGGamehubClient, Environment } from "layerg-gamehub-js";
 const client = new LayerGGamehubClient({
   apiKey: "apiKey",
   apiKeyId: "apiKeyId",
-  env: Environment.Dev,
+  env: Environment.Development,
   clientOptions: {
     retry: 3,
     timeout: 10000,
