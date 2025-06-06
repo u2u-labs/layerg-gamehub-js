@@ -1,5 +1,5 @@
 import { normalizeError, withRetry } from "../utils";
-import { LayerGError } from "../error";
+import { SDKError } from "../error";
 import { LayerGGamehubClient } from "../client";
 import { Result } from "../types";
 
@@ -17,8 +17,9 @@ export abstract class BaseModule {
     label = url
   ): Promise<Result<T>> {
     if (!this.client.internal.isAuthenticated()) {
-      throw new LayerGError(
-        "Client not authenticated. You need to call authenticate before making any request"
+      throw new SDKError(
+        "Client not authenticated. You need to call authenticate before making any request",
+        401
       );
     }
 

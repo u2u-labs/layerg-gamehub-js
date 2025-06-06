@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { LayerGError } from "./error";
+import { AuthError, BadRequestError, NetworkError, NotFoundError, RateLimitError, SDKError, ServerError, TimeoutError } from "./error";
 
 export function shouldRetry(err: any): boolean {
   if (!axios.isAxiosError(err)) {
@@ -51,25 +51,22 @@ export async function withRetry<T>(
   throw new Error("Unreachable");
 }
 
-export function normalizeError(
-  err: any,
-  contextMessage = "Unknown SDK error"
-): LayerGError {
-  if (err instanceof LayerGError) return err;
+export function normalizeError(error: any): SDKError {
+  if (error.response) {
+    const status = error.response.status;
+    const msg = error.response.data?.message || error.message || "Unknown error";
 
-  if (err && typeof err === "object") {
-    if ((err as AxiosError).isAxiosError) {
-      return new LayerGError(contextMessage, {
-        code: "HTTP_ERROR",
-        statusCode: err.response?.status,
-        cause: err.response?.data?.message ?? String(err),
-      });
-    }
-    return new LayerGError(contextMessage, {
-      cause: err.response?.data?.message ?? String(err),
-    });
+    if (status === 400) return new BadRequestError(msg, status, error);
+    if (status === 401 || status === 403) return new AuthError(msg, status, error);
+    if (status === 404) return new NotFoundError(msg, status, error);
+    if (status === 429) return new RateLimitError(msg, status, error);
+    if (status >= 500) return new ServerError(msg, status, error);
+
+    return new SDKError(msg, status, error);
   }
-  return new LayerGError(contextMessage, {
-    cause: err.response?.data?.message ?? String(err),
-  });
-}
+
+  if (error.code === "ECONNABORTED") return new TimeoutError("Request timed out", undefined, error);
+  if (error.message?.includes("Network Error")) return new NetworkError("Network error", undefined, error);
+
+  return new SDKError(error.message || "Unknown SDK error", undefined, error);
+};

@@ -74,7 +74,7 @@ export class LayerGGamehubClient {
   #getAuthHeader() {
     return { Authorization: `Bearer ${this.accessToken}` };
   }
-  
+
   /**
    * @description Authenticate with the LayerGGamehub API using the provided API key and API key ID in the constructor. Needs to be called before making any requests.
    * @returns `Result<AuthResponse>`
@@ -114,12 +114,17 @@ export class LayerGGamehubClient {
   async #refreshAuthIfNeeded(): Promise<void> {
     const now = Date.now();
 
+    if (now < this.accessTokenExpire) {
+      return;
+    }
+
     if (this.refreshPromise) {
       await this.refreshPromise;
       return;
     }
 
     const doRefresh = async () => {
+      const now = Date.now();
       try {
         if (now >= this.refreshTokenExpire) {
           await this.authenticate();

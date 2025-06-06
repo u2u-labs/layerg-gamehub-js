@@ -1,4 +1,13 @@
-import { LayerGError } from "./error";
+import {
+  AuthError,
+  BadRequestError,
+  NetworkError,
+  NotFoundError,
+  RateLimitError,
+  SDKError,
+  ServerError,
+  TimeoutError,
+} from "./error";
 
 export enum Environment {
   Development = "Development",
@@ -187,7 +196,7 @@ export interface AuthResponse {
 export type Result<T> = {
   data?: T;
   isSuccess: boolean;
-  error?: LayerGError;
+  error?: SDKError;
 };
 
 export interface GetByTokenIdInput {
@@ -203,3 +212,12 @@ export interface DeleteAssetInput {
 export interface DeleteAssetSuccessResponse {
   message: string;
 }
+
+export type KnownErrors =
+  | AuthError
+  | NetworkError
+  | TimeoutError
+  | RateLimitError
+  | BadRequestError
+  | NotFoundError
+  | ServerError;
