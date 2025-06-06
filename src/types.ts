@@ -9,8 +9,8 @@ import {
   TimeoutError,
 } from "./error";
 
-export enum Environment {
-  Development = "Development",
+export enum Mode {
+  Sandbox = "Sandbox",
   Production = "Production",
 }
 

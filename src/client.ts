@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { baseUrls } from "./config";
-import { ClientOptions, AuthResponse, Environment, Result } from "./types";
+import { ClientOptions, AuthResponse, Mode, Result } from "./types";
 import { AssetModule } from "./modules/asset";
 import { CollectionModule } from "./modules/collection";
 import { normalizeError } from "./utils";
@@ -24,19 +24,19 @@ export class LayerGGamehubClient {
    * @param params {
    *  apiKey: string;
    *  apiKeyId: string;
-   *  env: Environment;
+   *  mode: Mode;
    *  clientOptions: ClientOptions;
    */
   constructor(params: {
     apiKey: string;
     apiKeyId: string;
-    env: Environment;
-    clientOptions: ClientOptions;
+    mode?: Mode;
+    clientOptions?: ClientOptions;
   }) {
     const {
       apiKey,
       apiKeyId,
-      env,
+      mode = Mode.Production,
       clientOptions = { retry: 1, timeout: 10000 },
     } = params;
 
@@ -46,7 +46,7 @@ export class LayerGGamehubClient {
     this.clientOptions = clientOptions;
 
     this.axios = axios.create({
-      baseURL: baseUrls[env],
+      baseURL: baseUrls[mode],
       timeout: clientOptions.timeout,
     });
 

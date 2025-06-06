@@ -7,12 +7,12 @@
 **Example:**
 
 ```typescript
-import { LayerGGamehubClient, Environment } from "layerg-gamehub-js";
+import { LayerGGamehubClient, Mode } from "layerg-gamehub-js";
 
 const client = new LayerGGamehubClient({
   apiKey: "apiKey",
   apiKeyId: "apiKeyId",
-  env: Environment.Development,
+  mode: Mode.Sandbox, // mode: Defaults to Mode.Production. Choose between Mode.Sandbox (for development/testing) and Mode.Production (live environment).
   clientOptions: {
     retry: 3,
     timeout: 10000,

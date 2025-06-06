@@ -1,7 +1,7 @@
-import { Environment } from "./types";
+import { Mode } from "./types";
 
-export const baseUrls: Record<Environment, string> = {
-  [Environment.Development]: "https://agg-dev.layerg.xyz/api",
-  [Environment.Production]: "https://agg-dev.layerg.xyz/api",
+export const baseUrls: Record<Mode, string> = {
+  [Mode.Sandbox]: "https://agg-dev.layerg.xyz/api",
+  [Mode.Production]: "https://agg-dev.layerg.xyz/api",
 };
 
