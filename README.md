@@ -1,4 +1,19 @@
-# LayerG Gamehub Client SDK
+## Installation
+
+### **npm**
+```bash
+npm install layerg-gamehub-js
+```
+
+### **yarn**
+```bash
+yarn add layerg-gamehub-js
+```
+
+### **pnpm**
+```bash
+pnpm add layerg-gamehub-js
+```
 
 ---
 
@@ -7,11 +22,11 @@
 **Example:**
 
 ```typescript
-import { LayerGGamehubClient, Mode } from "layerg-gamehub-js";
+import { LayerGGamehubClient, Mode } from 'layerg-gamehub-js';
 
 const client = new LayerGGamehubClient({
-  apiKey: "apiKey",
-  apiKeyId: "apiKeyId",
+  apiKey: 'apiKey',
+  apiKeyId: 'apiKeyId',
   mode: Mode.Sandbox, // mode: Defaults to Mode.Production. Choose between Mode.Sandbox (for development/testing) and Mode.Production (live environment).
   clientOptions: {
     retry: 3,
@@ -22,7 +37,7 @@ const client = new LayerGGamehubClient({
 const { isSuccess, error, data } = await client.authenticate();
 
 if (!isSuccess) {
-  console.error("Failed to authenticate:", error?.message);
+  console.error('Failed to authenticate:', error?.message);
   return;
 }
 
@@ -31,11 +46,9 @@ if (!isSuccess) {
 
 ---
 
-### Asset
+## Asset
 
-#### Methods
-
-##### getByTokenId
+### getByTokenId
 
 ```typescript
 getByTokenId(input: GetByTokenIdInput): Promise<Result<Asset>>
@@ -51,18 +64,18 @@ Fetches an asset by token id within a collection.
 
 ```typescript
 const input: GetByTokenIdInput = {
-  collectionId: "COLLECTION_ID",
-  tokenId: "TOKEN_ID",
+  collectionId: 'COLLECTION_ID',
+  tokenId: 'TOKEN_ID',
 };
 
 const { data, isSuccess, error } = await client.asset.getByTokenId(input);
 
 if (isSuccess) {
-  console.log("Asset: ", data);
+  console.log('Asset: ', data);
 }
 ```
 
-##### create
+### create
 
 ```typescript
 create(input: CreateAssetInput): Promise<Result<Asset>>
@@ -78,13 +91,13 @@ Creates a new asset.
 
 ```typescript
 const input: CreateAssetInput = {
-  name: "test",
-  description: "test",
-  tokenId: "TOKEN_ID",
-  collectionId: "COLLECTION_ID",
-  quantity: "1",
+  name: 'test',
+  description: 'test',
+  tokenId: 'TOKEN_ID',
+  collectionId: 'COLLECTION_ID',
+  quantity: '1',
   media: {
-    S3Url: "",
+    S3Url: '',
   },
   metadata: {
     metadata: {
@@ -96,11 +109,11 @@ const input: CreateAssetInput = {
 const { data, isSuccess, error } = await client.asset.create(input);
 
 if (isSuccess) {
-  console.log("Created Asset: ", data);
+  console.log('Created Asset: ', data);
 }
 ```
 
-##### update
+### update
 
 ```typescript
 update(input: UpdateAssetInput): Promise<Result<Asset>>
@@ -117,12 +130,12 @@ Updates an existing asset.
 ```typescript
 const input: UpdateAssetInput = {
   data: {
-    name: "test",
-    description: "test",
-    tokenId: "TOKEN_ID",
-    quantity: "1",
+    name: 'test',
+    description: 'test',
+    tokenId: 'TOKEN_ID',
+    quantity: '1',
     media: {
-      S3Url: "",
+      S3Url: '',
     },
     metadata: {
       metadata: {
@@ -131,19 +144,19 @@ const input: UpdateAssetInput = {
     },
   },
   where: {
-    collectionId: "COLLECTION_ID",
-    assetId: "ASSET_ID",
+    collectionId: 'COLLECTION_ID',
+    assetId: 'ASSET_ID',
   },
 };
 
 const { data, isSuccess, error } = await client.asset.update(input);
 
 if (isSuccess) {
-  console.log("Updated Asset: ", data);
+  console.log('Updated Asset: ', data);
 }
 ```
 
-##### delete
+### delete
 
 ```typescript
 delete(input: DeleteAssetInput): Promise<Result<DeleteAssetSuccessResponse>>
@@ -159,20 +172,20 @@ Delete an existing asset.
 
 ```typescript
 const input: DeleteAssetInput = {
-  collectionId: "COLLECTION_ID",
-  tokenId: "TOKEN_ID",
+  collectionId: 'COLLECTION_ID',
+  tokenId: 'TOKEN_ID',
 };
 
 const { data, isSuccess, error } = await client.asset.delete(input);
 
 if (isSuccess) {
-  console.log("Asset deleted!");
+  console.log('Asset deleted!');
 }
 ```
 
-### Collection
+## Collection
 
-##### get
+### get
 
 ```typescript
 getById(collectionId: string): Promise<Result<Collection>>
@@ -188,15 +201,15 @@ Fetches a collection by ID.
 
 ```typescript
 const { data, isSuccess, error } = await client.collection.getById(
-  "collectionId"
+  'collectionId',
 );
 
 if (isSuccess) {
-  console.log("Collection: ", data);
+  console.log('Collection: ', data);
 }
 ```
 
-##### create
+### create
 
 ```typescript
 create(input: CreateCollectionInput): Promise<Result<Collection>>
@@ -212,15 +225,15 @@ Creates a new collection.
 
 ```typescript
 const input: CreateCollectionInput = {
-  name: "test",
-  description: "test",
-  avatarUrl: "https://example.com/avatar.png",
-  projectId: "PROJECT_ID",
+  name: 'test',
+  description: 'test',
+  avatarUrl: 'https://example.com/avatar.png',
+  projectId: 'PROJECT_ID',
   smc: {
-    contractAddress: "0x1234567890abcdef",
-    contractType: "ERC721",
+    contractAddress: '0x1234567890abcdef',
+    contractType: 'ERC721',
     networkID: 1,
-    tokenSymbol: "TEST",
+    tokenSymbol: 'TEST',
     totalSupply: 10000,
   },
 };
@@ -228,11 +241,11 @@ const input: CreateCollectionInput = {
 const { data, isSuccess, error } = await client.collection.create(input);
 
 if (isSuccess) {
-  console.log("Created Collection: ", data);
+  console.log('Created Collection: ', data);
 }
 ```
 
-##### update
+### update
 
 ```typescript
 update(input: UpdateCollectionInput): Promise<Result<Collection>>
@@ -249,31 +262,31 @@ Updates an existing collection.
 ```typescript
 const input: UpdateCollectionInput = {
   data: {
-    name: "test",
-    description: "test",
-    avatarUrl: "https://example.com/avatar.png",
-    projectId: "PROJECT_ID",
+    name: 'test',
+    description: 'test',
+    avatarUrl: 'https://example.com/avatar.png',
+    projectId: 'PROJECT_ID',
     smc: {
-      contractAddress: "0x1234567890abcdef",
-      contractType: "ERC721",
+      contractAddress: '0x1234567890abcdef',
+      contractType: 'ERC721',
       networkID: 1,
-      tokenSymbol: "TEST",
+      tokenSymbol: 'TEST',
       totalSupply: 10000,
     },
   },
   where: {
-    collectionId: "COLLECTION_ID",
+    collectionId: 'COLLECTION_ID',
   },
 };
 
 const { data, isSuccess, error } = await client.collection.update(input);
 
 if (isSuccess) {
-  console.log("Updated Collection: ", data);
+  console.log('Updated Collection: ', data);
 }
 ```
 
-##### public
+### public
 
 ```typescript
 public(collectionId: string): Promise<Result<Collection>>
@@ -289,10 +302,10 @@ Public a collection to the marketplace.
 
 ```typescript
 const { data, isSuccess, error } = await client.collection.public(
-  "collectionId"
+  'collectionId',
 );
 if (isSuccess) {
-  console.log("Collection public: ", data);
+  console.log('Collection public: ', data);
 }
 ```
 
@@ -302,14 +315,14 @@ All methods return `{ data, isSuccess, error }`. If `isSuccess === false`, check
 
 ```typescript
 const { data, isSuccess, error } = await client.asset.get(
-  "assetId",
-  "collectionId"
+  'assetId',
+  'collectionId',
 );
 
 if (!isSuccess) {
-  console.error("Fetched asset error: ", error?.cause);
+  console.error('Fetched asset error: ', error?.cause);
   return;
 }
 
-console.log("Fetched asset successfully: ", data?.id);
+console.log('Fetched asset successfully: ', data?.id);
 ```
