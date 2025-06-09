@@ -1,3 +1,9 @@
+# LayerG Gamehub SDK
+
+## Description
+
+LayerG Gamehub SDK is a library that provides a convenient interface for interacting with the LayerG Gamehub API. This library contains a set of methods that can be used to interact with the API, such as creating, updating, and deleting assets and collections.
+
 ## Installation
 
 ### **npm**
